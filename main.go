@@ -52,6 +52,7 @@ func main() {
 	log.Info("Started")
 	// install prometheus http handler
 	http.Handle(*metricsPath, prometheus.Handler())
+	// TODO: add friendly handling of / path (now returns 404 with a blank page)
 	// launch prometheus metrics handler as a goroutine
 	go observeOnewireTemperature()
 	// starts http listener
