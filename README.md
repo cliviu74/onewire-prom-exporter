@@ -45,8 +45,8 @@ Usage of ./onewire-prom-exporter:
 
 ## Prometheus Configuration
 
-The snmp exporter needs to be passed the address as a parameter, this can be
-done with relabelling.
+This is a simple target configuration for prometheus. The ip in the targets array
+needs to be replaced with the IP of the node running the exporter.
 
 Example config:
 ```YAML
