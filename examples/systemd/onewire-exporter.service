@@ -1,0 +1,10 @@
+[Unit]
+Description=Onewire Prometheus Exporter
+
+[Service]
+User=nobody
+EnvironmentFile=-/etc/sysconfig/onewire-exporter
+ExecStart=/usr/local/bin/onewire-prom-exporter $OPTIONS
+
+[Install]
+WantedBy=multi-user.target
