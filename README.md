@@ -29,8 +29,9 @@ and display the metrics as gauges, labeled with device_id (onwire address)
 ~# curl -s http://localhost:8105/metrics | grep onewire
 # HELP onewire_temperature_c Onewire Temperature Sensor Value in Celsius.
 # TYPE onewire_temperature_c gauge
-onewire_temperature_c{device_id="xx-0xxxxxxxxxxx"} 31.062
-onewire_temperature_c{device_id="xx-0xxxxxxxxxxx"} 32.625
+onewire_temperature_c{device_id="28-xxxxxxxxxxxx",hostname="pienv"} 29.125
+onewire_temperature_c{device_id="28-xxxxxxxxxxxx",hostname="pienv"} 31.812
+
 ```
 
 ## Configuration
@@ -39,14 +40,14 @@ You can also specify a the web port and metrics path upon launching the exporter
 
 ```
 Usage of ./onewire-prom-exporter:
-  -web.listen string
+  -web.listen-address string
     	Address and port to expose metrics (default ":8105")
-  -web.path string
+  -web.telemetry-path string
     	Path under which to expose metrics. (default "/metrics")
 ```
 
 ```
-./onewire-prom-exporter -web.listen=0.0.0.0:8105 -web.path=/metrics 
+./onewire-prom-exporter -web.listen-address=0.0.0.0:8105 -web.telemetry-path=/metrics 
 ```
 
 ## Runing the exporter with systemd
@@ -67,4 +68,9 @@ scrape_configs:
     static_configs:
       - targets: ['192.168.1.123:8105']
 ```
+## Contributing
 
+We love your input and appreciate your contribution. Feel free to report bugs, contribute, discuss changes, fork this project, create pull requests.
+If you wish to become a contributor, you are welcome to contact me. 
+## License
+Apache License 2.0, see [LICENSE](LICENSE).
