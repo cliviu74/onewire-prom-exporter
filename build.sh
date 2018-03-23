@@ -1,13 +1,10 @@
 #!/bin/bash
 
-export GOBIN=$GOPATH/bin
+export GOBIN=.
 export PATH=$PATH:$GOBIN
 export GOOS=linux
 export GOARCH=arm
 export GOARM=5
 
-go get -u github.com/golang/dep/cmd/dep
-
-# dep init ./
 dep ensure --update 
 go build -o onewire-prom-exporter main.go
