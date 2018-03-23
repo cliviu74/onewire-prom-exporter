@@ -3,6 +3,10 @@
 This is an exporter that exposes information gathered from OneWire
 sensors in Prometheus friendly format.
 
+## Prerequisites
+
+Before building this exporter you need a working golang development environment. A good starting point is the 
+[Golang Getting Started](https://golang.org/doc/install) document.
 ## Installation
 
 The current build.sh script will build the binary for ARM 5 architecture (good for Raspberry Pi)
