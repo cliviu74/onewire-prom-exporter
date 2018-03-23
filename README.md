@@ -43,6 +43,9 @@ Usage of ./onewire-prom-exporter:
 ./onewire-prom-exporter -web.listen=0.0.0.0:8105 -web.path=/metrics 
 ```
 
+## Runing the exporter with systemd
+
+see examples: [here](examples/systemd/README.md)
 ## Prometheus Configuration
 
 This is a simple target configuration for prometheus. The ip in the targets array
