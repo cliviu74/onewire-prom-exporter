@@ -7,11 +7,13 @@ sensors in Prometheus friendly format.
 
 Before building this exporter you need a working golang development environment. A good starting point is the 
 [Golang Getting Started](https://golang.org/doc/install) document.
-## Installation
+## Building and Installation
 
 The current build.sh script will build the binary for ARM 5 architecture (good for Raspberry Pi)
 ```
-bash ./build.sh
+go get github.com/cliviu74/onewire-prom-exporter
+cd $GOPATH/src/github.com/cliviu74/onewire-prom-exporter
+./build.sh
 ```
 
 ## Usage
