@@ -19,8 +19,8 @@ import (
 var (
 	onewireDevicePath   = "/sys/bus/w1/devices/"
 	onewireDeviceList   []string
-	listenAddress       = flag.String("web.listen", ":8105", "Address and port to expose metrics")
-	metricsPath         = flag.String("web.path", "/metrics", "Path under which to expose metrics.")
+	listenAddress       = flag.String("web.listen-address", ":8105", "Address and port to expose metrics")
+	metricsPath         = flag.String("web.telemetry-path", "/metrics", "Path under which to expose metrics.")
 	onewireTemperatureC = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "onewire_temperature_c",
