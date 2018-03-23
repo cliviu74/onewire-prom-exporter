@@ -19,6 +19,7 @@ import (
 var (
 	onewireDevicePath   = "/sys/bus/w1/devices/"
 	onewireDeviceList   []string
+	hostname, _         = os.Hostname()
 	listenAddress       = flag.String("web.listen-address", ":8105", "Address and port to expose metrics")
 	metricsPath         = flag.String("web.telemetry-path", "/metrics", "Path under which to expose metrics.")
 	onewireTemperatureC = prometheus.NewGaugeVec(
@@ -28,6 +29,7 @@ var (
 		},
 		[]string{
 			"device_id",
+			"hostname",
 		},
 	)
 )
@@ -73,8 +75,8 @@ func observeOnewireTemperature() {
 			if err != nil {
 				log.WithFields(log.Fields{"deviceID": deviceID}).Error("Error reading from device")
 			}
-			log.WithFields(log.Fields{"deviceID": deviceID, "value": value}).Info("Value read from device")
-			onewireTemperatureC.With(prometheus.Labels{"device_id": deviceID}).Set(value)
+			log.WithFields(log.Fields{"deviceID": deviceID, "value": value, "hostname": hostname}).Info("Value read from device")
+			onewireTemperatureC.With(prometheus.Labels{"device_id": deviceID, "hostname": hostname}).Set(value)
 		}
 		time.Sleep(60 * time.Second)
 	}
