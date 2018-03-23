@@ -9,5 +9,5 @@ export GOARM=5
 go get -u github.com/golang/dep/cmd/dep
 
 # dep init ./
-dep ensure --update ./
-go build -o onwire-prom-exporter main.go
+dep ensure --update 
+go build -o onewire-prom-exporter main.go
