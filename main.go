@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -23,6 +24,7 @@ var (
 	listenAddress       = flag.String("web.listen-address", ":8105", "Address and port to expose metrics")
 	metricsPath         = flag.String("web.telemetry-path", "/metrics", "Path under which to expose metrics.")
 	jsonMetricsPath     = flag.String("web.json-path", "/json", "Path under which to expose json metrics.")
+	jsonMetricsList     = make(map[string]float64)
 	onewireTemperatureC = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "onewire_temperature_c",
@@ -59,7 +61,7 @@ func main() {
 	http.HandleFunc(*jsonMetricsPath, jsonPathHandler)
 
 	// launch prometheus metrics handler as a goroutine
-	//	go observeOnewireTemperature()
+	go observeOnewireTemperature()
 	// starts http listener
 	log.WithFields(log.Fields{"httpListen": *listenAddress}).Info("Exporter listening")
 	log.Fatal(http.ListenAndServe(*listenAddress, nil))
@@ -78,7 +80,8 @@ func rootPathHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func jsonPathHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "JsonHandler %s", r.URL.Path[1:])
+	jsonData, _ := json.Marshal(jsonMetricsList)
+	fmt.Fprintf(w, "%s", string(jsonData))
 }
 
 func observeOnewireTemperature() {
@@ -95,6 +98,7 @@ func observeOnewireTemperature() {
 			}
 			log.WithFields(log.Fields{"deviceID": deviceID, "value": value, "hostname": hostname}).Info("Value read from device")
 			onewireTemperatureC.With(prometheus.Labels{"device_id": deviceID, "hostname": hostname}).Set(value)
+			jsonMetricsList[deviceID] = value
 		}
 		time.Sleep(60 * time.Second)
 	}
