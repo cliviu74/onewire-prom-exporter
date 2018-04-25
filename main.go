@@ -22,6 +22,7 @@ var (
 	hostname, _         = os.Hostname()
 	listenAddress       = flag.String("web.listen-address", ":8105", "Address and port to expose metrics")
 	metricsPath         = flag.String("web.telemetry-path", "/metrics", "Path under which to expose metrics.")
+	jsonMetricsPath     = flag.String("web.json-path", "/json", "Path under which to expose json metrics.")
 	onewireTemperatureC = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "onewire_temperature_c",
@@ -52,15 +53,32 @@ func init() {
 
 func main() {
 	log.Info("Started")
-	// install prometheus http handler
+	// install net/http handlers
 	http.Handle(*metricsPath, prometheus.Handler())
-	// TODO: add friendly handling of / path (now returns 404 with a blank page)
+	http.HandleFunc("/", rootPathHandler)
+	http.HandleFunc(*jsonMetricsPath, jsonPathHandler)
+
 	// launch prometheus metrics handler as a goroutine
-	go observeOnewireTemperature()
+	//	go observeOnewireTemperature()
 	// starts http listener
 	log.WithFields(log.Fields{"httpListen": *listenAddress}).Info("Exporter listening")
 	log.Fatal(http.ListenAndServe(*listenAddress, nil))
 
+}
+
+func rootPathHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, `<html>
+		<head><title>Node Exporter</title></head>
+		<body>
+		<h1>Node Exporter</h1>
+		<p><a href="`+*metricsPath+`">Metrics</a></p>
+		<p><a href="`+*jsonMetricsPath+`">JSON Metrics</a></p>
+		</body>
+		</html>`)
+}
+
+func jsonPathHandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "JsonHandler %s", r.URL.Path[1:])
 }
 
 func observeOnewireTemperature() {
