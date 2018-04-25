@@ -17,14 +17,20 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+type sensor struct {
+	SensorID    string  `json:"sensorid"`
+	SensorType  string  `json:"type"`
+	SensorValue float64 `json:"value"`
+}
+
 var (
+	sensors             = []sensor{}
 	onewireDevicePath   = "/sys/bus/w1/devices/"
 	onewireDeviceList   []string
 	hostname, _         = os.Hostname()
 	listenAddress       = flag.String("web.listen-address", ":8105", "Address and port to expose metrics")
 	metricsPath         = flag.String("web.telemetry-path", "/metrics", "Path under which to expose metrics.")
 	jsonMetricsPath     = flag.String("web.json-path", "/json", "Path under which to expose json metrics.")
-	jsonMetricsList     = make(map[string]float64)
 	onewireTemperatureC = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "onewire_temperature_c",
@@ -80,7 +86,7 @@ func rootPathHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func jsonPathHandler(w http.ResponseWriter, r *http.Request) {
-	jsonData, _ := json.Marshal(jsonMetricsList)
+	jsonData, _ := json.Marshal(sensors)
 	fmt.Fprintf(w, "%s", string(jsonData))
 }
 
@@ -98,7 +104,7 @@ func observeOnewireTemperature() {
 			}
 			log.WithFields(log.Fields{"deviceID": deviceID, "value": value, "hostname": hostname}).Info("Value read from device")
 			onewireTemperatureC.With(prometheus.Labels{"device_id": deviceID, "hostname": hostname}).Set(value)
-			jsonMetricsList[deviceID] = value
+			sensors = append(sensors, sensor{SensorID: deviceID, SensorType: "temperature", SensorValue: value})
 		}
 		time.Sleep(60 * time.Second)
 	}
