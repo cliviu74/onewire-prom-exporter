@@ -24,7 +24,7 @@ type sensor struct {
 }
 
 var (
-	sensors             = []sensor{}
+	sensors             = make([]sensor, 1, 2)
 	onewireDevicePath   = "/sys/bus/w1/devices/"
 	onewireDeviceList   []string
 	hostname, _         = os.Hostname()
@@ -97,6 +97,8 @@ func observeOnewireTemperature() {
 		log.Fatal("Error getting Onewire device list")
 	}
 	for {
+		sensors = sensors[:len(onewireDeviceList)]
+		index := 0
 		for _, deviceID := range onewireDeviceList {
 			value, err := readOnewireDevicePayload(deviceID)
 			if err != nil {
@@ -104,7 +106,8 @@ func observeOnewireTemperature() {
 			}
 			log.WithFields(log.Fields{"deviceID": deviceID, "value": value, "hostname": hostname}).Info("Value read from device")
 			onewireTemperatureC.With(prometheus.Labels{"device_id": deviceID, "hostname": hostname}).Set(value)
-			sensors = append(sensors, sensor{SensorID: deviceID, SensorType: "temperature", SensorValue: value})
+			sensors[index] = sensor{SensorID: deviceID, SensorType: "temperature", SensorValue: value}
+			index++
 		}
 		time.Sleep(60 * time.Second)
 	}
