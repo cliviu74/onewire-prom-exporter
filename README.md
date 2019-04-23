@@ -70,7 +70,7 @@ scrape_configs:
 ```
 ## Contributing
 
-We love your input and appreciate your contribution. Feel free to report bugs, contribute, discuss changes, fork this project, create pull requests.
+Feel free to report bugs, contribute, discuss changes, fork this project, create pull requests.
 If you wish to become a contributor, you are welcome to contact me. 
 ## License
 Apache License 2.0, see [LICENSE](LICENSE).
