@@ -3,7 +3,7 @@
 This is the unit file that runs the exporter as a service with systemd
 
 The unit file in this directory is to be put into /lib/systemd/system/onewire-exporter.service. 
-Service is running as nobody user. Extra configuration for the daemon can be added to  /etc/sysconfig/node_exporter.
+Service is running as nobody user. Extra configuration for the daemon can be added to /etc/sysconfig/onewire-exporter.
 Example
 ```
 # /etc/sysconfig/onewire-exporter
