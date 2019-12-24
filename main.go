@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
-
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -62,7 +62,7 @@ func init() {
 func main() {
 	log.Info("Started")
 	// install net/http handlers
-	http.Handle(*metricsPath, prometheus.Handler())
+	http.Handle(*metricsPath, promhttp.Handler())
 	http.HandleFunc("/", rootPathHandler)
 	http.HandleFunc(*jsonMetricsPath, jsonPathHandler)
 
