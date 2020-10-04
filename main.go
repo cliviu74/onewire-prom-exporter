@@ -24,7 +24,7 @@ type sensor struct {
 }
 
 var (
-	sensors             = make([]sensor, 1, 2)
+	sensors             []sensor
 	onewireDevicePath   = "/sys/bus/w1/devices/"
 	onewireDeviceList   []string
 	hostname, _         = os.Hostname()
@@ -138,5 +138,8 @@ func createOnewireDeviceList() error {
 			log.Infof("Device found: %s", device.Name())
 		}
 	}
+
+	sensors = make([]sensor, len(onewireDeviceList))
+
 	return nil
 }
