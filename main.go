@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -115,14 +116,24 @@ func observeOnewireTemperature() {
 
 func readOnewireDevicePayload(deviceID string) (float64, error) {
 	devicePayloadFile := fmt.Sprintf("%s%s/w1_slave", onewireDevicePath, deviceID)
-	buffer, err := ioutil.ReadFile(devicePayloadFile)
-	if err != nil {
-		log.WithFields(log.Fields{"devicePayloadFile": devicePayloadFile}).Error("Error reading Device")
-		return 0, err
-	}
 	re := regexp.MustCompile(`(?s).*YES.*t=([0-9]+)`)
-	value, _ := strconv.ParseFloat(re.FindStringSubmatch(string(buffer))[1], 64)
-	return value / 1000, nil
+
+	for retries := 0; retries < 5; retries++ {
+		buffer, err := ioutil.ReadFile(devicePayloadFile)
+		if err != nil {
+			log.WithFields(log.Fields{"devicePayloadFile": devicePayloadFile}).Error("Error reading Device")
+			return 0, err
+		}
+		match := re.FindStringSubmatch(string(buffer))
+		if len(match) > 0 {
+			value, _ := strconv.ParseFloat(match[1], 64)
+			return value / 1000, nil
+		}
+		log.WithFields(log.Fields{"deviceID": deviceID, "hostname": hostname}).Warning("Retrying read")
+		time.Sleep(1 * time.Second)
+	}
+
+	return 0, errors.New("Failed to read device")
 }
 
 func createOnewireDeviceList() error {
