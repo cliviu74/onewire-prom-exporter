@@ -120,7 +120,7 @@ func readOnewireDevicePayload(deviceID string) (float64, error) {
 		log.WithFields(log.Fields{"devicePayloadFile": devicePayloadFile}).Error("Error reading Device")
 		return 0, err
 	}
-	re := regexp.MustCompile(`(?s).*YES.*t=([0-9]+)`)
+	re := regexp.MustCompile(`(?s).*YES.*t=(-?[0-9]+)`)
 	value, _ := strconv.ParseFloat(re.FindStringSubmatch(string(buffer))[1], 64)
 	return value / 1000, nil
 }
